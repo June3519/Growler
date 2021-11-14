@@ -1,4 +1,5 @@
 import datetime
+import sys
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import or_
@@ -48,7 +49,7 @@ def createUser(email: str, nickName: str, password: str) -> bool:
             return False
     except Exception as e:
         session.rollback()
-        print(e)
+        print(e, file=sys.stderr)
         return False
     finally:
         session.close()
