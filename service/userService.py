@@ -48,6 +48,8 @@ def createUser(email: str, nickName: str, password: str) -> bool:
             return False
     except Exception as e:
         session.rollback()
+        print(e)
+        return False
     finally:
         session.close()
 
@@ -65,6 +67,7 @@ def emailCert(certKey: str) -> bool:
             return False
     except Exception as e:
         session.rollback()
+        return False
     finally:
         session.close()
 
