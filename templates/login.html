@@ -55,7 +55,7 @@
                                     <div class="form-group">
                                         <input type="number" class="form-control form-control-user"
                                                id="authNumber" name="authNumber"
-                                               placeholder="Enter AuthNumber From Email" >
+                                               placeholder="Enter AuthNumber From Email" disabled>
                                     </div>
 
                                     <input type="button" class="btn btn-primary btn-user btn-block" value="SendAuthKey"
@@ -111,7 +111,7 @@
                 $('#authNumber').removeAttr("disabled");
             })
             .catch(function (error) {
-                alert(error);
+                alert(error.response.data);
             })
     }
 </script>
