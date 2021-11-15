@@ -58,9 +58,9 @@
                                                placeholder="Enter AuthNumber From Email" disabled>
                                     </div>
 
-                                    <input type="button" class="btn btn-primary btn-user btn-block" value="SendAuthKey"
+                                    <input type="button" id="sendAuthKeyButton" class="btn btn-primary btn-user btn-block" value="SendAuthKey"
                                            onclick="sendAuthKey()">
-                                    <input type="submit" class="btn btn-primary btn-user btn-block" value="Login">
+                                    <input type="submit" id="sendLoginButton" class="btn btn-primary btn-user btn-block" value="Login" disabled>
                                 </form>
 
                                 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -109,6 +109,8 @@
         })
             .then(function (response) {
                 $('#authNumber').removeAttr("disabled");
+                $('#sendAuthKeyButton').attr("disabled", true);
+                $('#sendLoginButton').removeAttr("disabled");
             })
             .catch(function (error) {
                 alert(error.response.data);
