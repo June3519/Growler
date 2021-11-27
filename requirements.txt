@@ -19,4 +19,4 @@ protobuf==3.19.1
 SQLAlchemy==1.4.27
 Werkzeug==2.0.2
 WTForms==3.0.0
-marshmallow-sqlalchemy=0.26.1
+marshmallow-sqlalchemy==0.26.1
