@@ -1,4 +1,4 @@
-from app import db
+from ProjectGrowler import db
 from datetime import datetime
 
 class UserEmailCertModel(db.Model):

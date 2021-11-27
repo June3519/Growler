@@ -1,18 +1,17 @@
-import datetime
 import sys
 
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy import or_
-from app import db
-from models.userModel import *
-from models.userEmailCert import UserEmailCertModel
-from models.userLoginAuth import UserLoginAuthModel
-from service.mailService import sendSignUpAuthMail, sendLoginAuthMail
-from datetime import timedelta
+from ProjectGrowler import db
+from ProjectGrowler.models.userModel import UserModel, UserFlaskLoginData
+from ProjectGrowler.models.userEmailCert import UserEmailCertModel
+from ProjectGrowler.models.userLoginAuth import UserLoginAuthModel
+from ProjectGrowler.service.mailService import sendSignUpAuthMail, sendLoginAuthMail
+from datetime import timedelta, datetime
 
 import string
 import random
 import hashlib
+
 
 
 def createUser(email: str, nickName: str, password: str) -> bool:

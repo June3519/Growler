@@ -1,6 +1,8 @@
-from app import db
+from ProjectGrowler import db
 from datetime import datetime
 from flask_login import UserMixin
+import marshmallow_sqlalchemy as ma
+
 
 class UserModel(db.Model):
     __tablename__ = 'users'
@@ -13,6 +15,14 @@ class UserModel(db.Model):
 
     createdAt = db.Column(db.DateTime, default=datetime.now)
     updatedAt = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
+
+class UserModelSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = UserModel
+        exclude = ("password", )
+        load_instance = True
+        include_relationships = True
 
 
 class UserFlaskLoginData(UserMixin):
