@@ -1,4 +1,4 @@
-marshmallow=3.14.1
+marshmallow==3.14.1
 blinker==1.4
 click==8.0.3
 colorama==0.4.4
