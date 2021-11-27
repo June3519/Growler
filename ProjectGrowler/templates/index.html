@@ -25,16 +25,18 @@
             <section class="px-4 sm:px-6 lg:px-4 xl:px-6 pt-4 pb-4 sm:pb-6 lg:pb-4 xl:pb-6 space-y-4"
                      v-if="nickName!== ''">
                 <span class="flex text-gray-900 text-lg space-x-5">${ nickName }$</span>
+
+
                 <button id="buttonFollow"
                         class="focus:outline-none text-sm w-24 py-3 rounded-md font-semibold text-white bg-blue-500 ring-2"
-                        v-on:click="follow"
+                        v-on:click="follow" v-if="following == 'False'"
                 >
                     Follow
                 </button>
 
                 <button id="buttonFollow"
                         class="focus:outline-none text-sm w-24 py-3 rounded-md font-semibold text-white bg-red-500 ring-2"
-                        v-on:click="unfollow"
+                        v-on:click="unfollow" v-if="following == 'True'"
                 >
                     UnFollow
                 </button>
@@ -87,6 +89,7 @@
             data() {
                 return {
                     nickName: '{{ nickName }}',
+                    following: '{{ following }}',
                     newMessage: '',
                     newTags: '',
                     existsPosts: [],
@@ -110,6 +113,8 @@
                         message: this.newMessage,
                         tags: this.newTags,
                     }).then(function (response) {
+                        appInstance.newMessage = '';
+                        appInstance.newTags = '';
                         appInstance.getRecentPost();
                     }).catch(function (error) {
                         alert(error.response.data);
@@ -118,10 +123,22 @@
                     })
                 },
                 follow() {
-
+                    axios.put(`/follow/${this.nickName}`, {}).then(function (response) {
+                        alert(response.data)
+                        location.reload()
+                    }).catch(function (error) {
+                        alert(error.response.data);
+                    }).finally(function () {
+                    })
                 },
                 unfollow() {
-
+                    axios.delete(`/unfollow/${this.nickName}`, {}).then(function (response) {
+                        alert(response.data)
+                        location.reload()
+                    }).catch(function (error) {
+                        alert(error.response.data);
+                    }).finally(function () {
+                    })
                 }
             }
         }

@@ -7,13 +7,18 @@ blue_allController = Blueprint("All", __name__, url_prefix="")
 @blue_allController.route('/')
 @login_required
 def index():
-    return render_template('index.html')
+    return render_template('index.html', following=False)
 
 
 @blue_allController.route('/users/<nickName>')
 @login_required
 def indexFromUser(nickName):
-    return render_template('index.html', nickName=nickName)
+    if current_user.nickName.casefold() == nickName.casefold():
+        return redirect(url_for("All.index"))
+
+    from ProjectGrowler.service.userService import isFollowing
+    fow = isFollowing(current_user.id, nickName)
+    return render_template('index.html', nickName=nickName, following=fow)
 
 
 @blue_allController.route('/growl', methods=['POST'])
@@ -117,6 +122,28 @@ def sendAuthKey():
         return make_response("Success", 200)
     else:
         return make_response(loginErrorMessage, 400)
+
+
+@blue_allController.route('/follow/<nickName>', methods=['PUT'])
+def addFollower(nickName):
+    from ProjectGrowler.service.userService import followUser
+    message, success = followUser(current_user.id, nickName)
+
+    if success:
+        return message, 200
+    else:
+        return message, 403
+
+
+@blue_allController.route('/unfollow/<nickName>', methods=['DELETE'])
+def deleteFollower(nickName):
+    from ProjectGrowler.service.userService import unfollowUser
+    message, success = unfollowUser(current_user.id, nickName)
+
+    if success:
+        return message, 200
+    else:
+        return message, 403
 
 
 # Default handlers

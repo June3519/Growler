@@ -2,6 +2,7 @@ import sys
 
 from sqlalchemy import or_
 from ProjectGrowler import db
+from ProjectGrowler.models.follower import FollowerModel
 from ProjectGrowler.models.userModel import UserModel, UserFlaskLoginData
 from ProjectGrowler.models.userEmailCert import UserEmailCertModel
 from ProjectGrowler.models.userLoginAuth import UserLoginAuthModel
@@ -11,7 +12,6 @@ from datetime import timedelta, datetime
 import string
 import random
 import hashlib
-
 
 
 def createUser(email: str, nickName: str, password: str) -> bool:
@@ -78,7 +78,7 @@ def loginWithoutAuthKey(email: str, password: str) -> str:
         existsUser = session.query(UserModel).filter(
             UserModel.email == email, UserModel.password == hashlib.sha256(password.encode()).hexdigest()).first()
 
-        if existsUser == None:
+        if existsUser is None:
             return "Wrong Email or Password"
 
         if existsUser.isMailCert == False:
@@ -150,6 +150,107 @@ def loginWithAuthKey(email: str, password: str, authKey: int) -> str:
         loginData.id = existsUser.id
         loginData.nickName = existsUser.nickName
         return None, loginData
+
+    except Exception as e:
+        session.rollback()
+        return e, None
+    finally:
+        session.close()
+
+
+def followUser(currentUserId: int, targetUserNickName: str) -> bool:
+    session = db.session.begin().session
+
+    try:
+        currentUser = session.query(UserModel).filter(
+            UserModel.id == currentUserId).first()
+
+        targetUser = session.query(UserModel).filter(
+            UserModel.nickName == targetUserNickName).first()
+
+        if currentUser is None:
+            return "Wrong Current User", False
+
+        if targetUser is None:
+            return "Wrong Target User NickName", False
+
+        existsFollowInfo = session.query(FollowerModel).filter(
+            (FollowerModel.userId == currentUser.id) & (FollowerModel.targetUserId == targetUser.id)).first()
+
+        if existsFollowInfo is None:
+            newFollowInfo = FollowerModel(
+                userId=currentUser.id,
+                targetUserId=targetUser.id
+            )
+            session.add(newFollowInfo)
+
+        session.commit()
+        return "Follow Success", True
+
+    except Exception as e:
+        session.rollback()
+        return e, None
+    finally:
+        session.close()
+
+def unfollowUser(currentUserId: int, targetUserNickName: str) -> bool:
+    session = db.session.begin().session
+
+    try:
+        currentUser = session.query(UserModel).filter(
+            UserModel.id == currentUserId).first()
+
+        targetUser = session.query(UserModel).filter(
+            UserModel.nickName == targetUserNickName).first()
+
+        if currentUser is None:
+            return "Wrong Current User", False
+
+        if targetUser is None:
+            return "Wrong Target User NickName", False
+
+        existsFollowInfo = session.query(FollowerModel).filter(
+            (FollowerModel.userId == currentUser.id) & (FollowerModel.targetUserId == targetUser.id)).first()
+
+        if existsFollowInfo is not None:
+            session.delete(existsFollowInfo)
+
+        session.commit()
+        return "UnFollow Success", True
+
+    except Exception as e:
+        session.rollback()
+        return e, None
+    finally:
+        session.close()
+
+
+
+def isFollowing(currentUserId: int, targetUserNickName: str) -> bool:
+    session = db.session.begin().session
+
+    try:
+        currentUser = session.query(UserModel).filter(
+            UserModel.id == currentUserId).first()
+
+        targetUser = session.query(UserModel).filter(
+            UserModel.nickName == targetUserNickName).first()
+
+        if currentUser is None:
+            return False
+
+        if targetUser is None:
+            return False
+
+        existsFollowInfo = session.query(FollowerModel).filter(
+            (FollowerModel.userId == currentUser.id) & (FollowerModel.targetUserId == targetUser.id)).first()
+
+        session.commit()
+
+        if existsFollowInfo is None:
+            return False
+        else:
+            return True
 
     except Exception as e:
         session.rollback()

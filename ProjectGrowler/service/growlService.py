@@ -1,6 +1,8 @@
 from sqlalchemy import *
 from ProjectGrowler import db
 from sqlalchemy import *
+
+from ProjectGrowler.models.follower import FollowerModel
 from ProjectGrowler.models.growl import *
 from ProjectGrowler.models.growlTag import *
 from ProjectGrowler.models.userModel import UserModel
@@ -58,8 +60,15 @@ def getPostsByNickName(nickName: str):
         if findUser is None:
             return None
 
+        followers = session.query(FollowerModel).filter(
+            FollowerModel.userId == findUser.id
+        ).all()
+
+        idList = list(map(lambda u: u.targetUserId, followers))
+        idList.append(findUser.id)
+
         posts = session.query(GrowlModel).filter(
-            GrowlModel.userId == findUser.id).order_by(desc(GrowlModel.id)).all()
+             GrowlModel.userId.in_(idList)).order_by(desc(GrowlModel.id)).all()
         result = GrowlModelWithNestedTagListSchema(many=True).dump(posts)
         return result
     except Exception as e:
