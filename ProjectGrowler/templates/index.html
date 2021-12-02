@@ -27,6 +27,13 @@
                 <span class="flex text-gray-900 text-lg space-x-5">${ nickName }$</span>
 
 
+                <button id="buttonDirectMessage"
+                        class="focus:outline-none text-sm w-24 py-3 rounded-md font-semibold text-white bg-gray-500 ring-2"
+                        v-on:click="gotoDM(nickName)"
+                >
+                    DirectMessage
+                </button>
+
                 <button id="buttonFollow"
                         class="focus:outline-none text-sm w-24 py-3 rounded-md font-semibold text-white bg-blue-500 ring-2"
                         v-on:click="follow" v-if="following == 'False'"
@@ -139,6 +146,9 @@
                         alert(error.response.data);
                     }).finally(function () {
                     })
+                },
+                gotoDM(nickName) {
+                    location.href = `/dm/${nickName}`;
                 }
             }
         }

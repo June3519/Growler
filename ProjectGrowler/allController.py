@@ -146,6 +146,40 @@ def deleteFollower(nickName):
         return message, 403
 
 
+@blue_allController.route('/dm/<nickName>')
+@login_required
+def directMessage(nickName):
+    if current_user.nickName.casefold() == nickName.casefold():
+        return redirect(url_for("All.directMessageList"))
+
+    from ProjectGrowler.service.dmService import getDMRoom
+    dmRoomId = getDMRoom(current_user.id, nickName)
+    if dmRoomId == False:
+        return "Unknown NickName", 404
+    else:
+        return render_template('dm.html', roomId=dmRoomId)
+
+
+@blue_allController.route('/dm/recent/<roomId>')
+@login_required
+def getRecentDM(roomId):
+    from ProjectGrowler.service.dmService import getDirectMessages
+    messages = getDirectMessages(roomId)
+
+    return jsonify(messages)
+
+
+@blue_allController.route('/dm')
+@login_required
+def directMessageList():
+    if current_user.nickName.casefold() == nickName.casefold():
+        return redirect(url_for("All.index"))
+
+    from ProjectGrowler.service.userService import isFollowing
+    fow = isFollowing(current_user.id, nickName)
+    return render_template('index.html', nickName=nickName, following=fow)
+
+
 # Default handlers
 @blue_allController.errorhandler(404)
 def page_not_found(e):
