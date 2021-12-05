@@ -6,10 +6,10 @@
             <ul class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4">
                 <li v-for="msg in existsMessages">
                     <div class="group cursor-pointer rounded-lg p-4 border border-gray-900 hover:bg-light-blue-500"
-                         v-bind:class="{ 'bg-blue-500' : msg.senderUser.id == myId}">
+                    v-bind:class="{ 'bg-blue-500' : msg.senderUser.id == myId}">
                         <dl class="grid sm:block lg:grid xl:block grid-cols-2 grid-rows-2 items-center">
                             <dd class="leading-6 font-medium text-black group-hover:text-light-blue-500">
-                                <span>${ msg.directMessageTexts }$</span>
+                                <span>${ msg.chatMessageTexts }$</span>
                                 <br>
                                 <span>${ msg.senderUser.nickName }$</span> - <span>${ msg.createdAt }$</span>
                             </dd>
@@ -42,8 +42,8 @@
                 delimiters: ['${', '}$']
             },
             mounted() {
-                setInterval(() => {
-                    appInstance.getRecentMessages();
+                setInterval(()=> {
+                    appInstance.getRecentChats();
                 }, 1000)
             },
             data() {
@@ -56,24 +56,24 @@
                 };
             },
             methods: {
-                getRecentMessages() {
-                    axios.get(`/dm/recent/${this.roomId}`
+                getRecentChats() {
+                    axios.get(`/chats/recent/${this.roomId}`
                     ).then(function (response) {
                         appInstance.existsMessages = response.data;
                     }).catch(function (error) {
-                        alert(error.response.data);
+                        alert(error.response);
                     })
                 },
                 sendMessage() {
                     if (this.isNewPosting === true) return;
                     this.isNewPosting = true;
 
-                    axios.post(`/dm/${this.roomId}`, {
+                    axios.post(`/chats/${this.roomId}`, {
                         message: this.newMessage,
                     }).then(function (response) {
                         appInstance.newMessage = '';
                     }).catch(function (error) {
-                        alert(error.response.data);
+                        alert(error.response);
                     }).finally(function () {
                         appInstance.isNewPosting = false;
                     })

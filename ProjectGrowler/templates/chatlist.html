@@ -1,0 +1,51 @@
+{% extends "defaultLayout.html" %}
+{% block content %}
+    <div id="app">
+        <div class="relative z-10 bg-white rounded-tr-xl sm:rounded-t-xl lg:rounded-xl shadow-lg">
+            <!-- Recent Message  Area -->
+            <ul class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4">
+                <li v-for="room in roomList">
+                    <div class="group cursor-pointer rounded-lg p-4 border border-gray-900 hover:bg-light-blue-500"
+                         v-on:click="gotoChat(room.tag)">
+                        <dl class="grid sm:block lg:grid xl:block grid-cols-2 grid-rows-2 items-center">
+                            <dd class="leading-6 font-medium text-black group-hover:text-light-blue-500">
+                                <span class="text-danger">#${ room.tag }$</span>
+                            </dd>
+                        </dl>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="/static/axios/axios.min.js"></script>
+    <script src="/static/vue/vue.js"></script>
+    <script src="/static/sbadmin/vendor/jquery/jquery.min.js"></script>
+    <script>
+        app = {
+            compilerOptions: {
+                delimiters: ['${', '}$']
+            },
+            mounted() {
+            },
+            data() {
+                return {
+                    roomList: JSON.parse($.parseHTML('{{ roomList }}')[0].data),
+                    myId: '{{ myId }}',
+                    isNewPosting: false,
+                    newMessage: '',
+                    existsMessages: [],
+                };
+            },
+            methods: {
+                gotoChat(tag) {
+                    location.href = `/chats/${tag}`;
+                }
+            }
+        }
+
+        let appInstance = Vue.createApp(app).mount('#app')
+    </script>
+{% endblock %}

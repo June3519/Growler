@@ -23,6 +23,10 @@ def create_app() -> Flask:
     app.config["MAIL_USE_TLS"] = False
     app.config["MAIL_USE_SSL"] = True
 
+    app.config['FLASK_RUN_HOST'] = '0.0.0.0'
+    app.config['FLASK_RUN_PORT'] = 443
+    app.config['FLASK_RUN_CERT'] = 'adhoc'
+
     login_manager.init_app(app)
     db.init_app(app)
     mail.init_app(app)

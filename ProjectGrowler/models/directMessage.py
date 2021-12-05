@@ -1,7 +1,12 @@
 from datetime import datetime, timedelta
+
+from marshmallow_sqlalchemy import fields
+
 from ProjectGrowler import db
 
 import marshmallow_sqlalchemy as ma
+
+from ProjectGrowler.models.userModel import UserModelSchema
 
 
 class DirectMessageModel(db.Model):
@@ -40,3 +45,4 @@ class DirectMessageTextModelSchema(ma.SQLAlchemyAutoSchema):
         model = DirectMessageTextModel
         load_instance = True
         include_relationships = True
+    senderUser = fields.Nested(UserModelSchema)

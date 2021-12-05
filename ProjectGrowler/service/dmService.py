@@ -90,16 +90,41 @@ def getDMRoomList(currentUserId: int):
                             desc(DirectMessageTextModel.id)).first()
                     })
             if room.recvUserId != currentUserId:
+                recentMessageData = session.query(DirectMessageTextModel).filter(
+                    DirectMessageTextModel.directMessageId == room.id).order_by(
+                    desc(DirectMessageTextModel.id)).first()
+
+                recentMsgString = '';
+                if recentMessageData is not None:
+                    recentMsgString = recentMessageData.directMessageTexts
+
                 resultLists.append(
                     {
                         "nickName": room.recvUser.nickName,
-                        "recentMessage": session.query(DirectMessageTextModel).filter(
-                            DirectMessageTextModel.directMessageId == room.id).order_by(
-                            desc(DirectMessageTextModel.id)).first()
+                        "recentMessage": recentMsgString
                     })
 
         session.commit()
         return resultLists
+    except Exception as e:
+        session.rollback()
+        return False
+    finally:
+        session.close()
+
+
+def postNewDirectMessage(currentUserId: int, roomId: int, message: str):
+    session = db.session.begin().session
+
+    try:
+        newText = DirectMessageTextModel(
+            directMessageId=roomId,
+            senderUserId=currentUserId,
+            directMessageTexts=message
+        )
+
+        session.add(newText)
+        session.commit()
     except Exception as e:
         session.rollback()
         return False

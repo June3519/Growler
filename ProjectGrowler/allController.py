@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, render_template, request, redirect, abort, session, flash, url_for, jsonify
 from flask_login import login_required, login_user, logout_user, current_user, login_manager
 
@@ -157,7 +159,7 @@ def directMessage(nickName):
     if dmRoomId == False:
         return "Unknown NickName", 404
     else:
-        return render_template('dm.html', roomId=dmRoomId)
+        return render_template('dm.html', roomId=dmRoomId, myId=current_user.id)
 
 
 @blue_allController.route('/dm/recent/<roomId>')
@@ -169,15 +171,64 @@ def getRecentDM(roomId):
     return jsonify(messages)
 
 
+@blue_allController.route('/dm/<roomId>', methods=['POST'])
+@login_required
+def newDmMessage(roomId):
+    from ProjectGrowler.service.dmService import postNewDirectMessage
+    params = request.get_json()
+    postNewDirectMessage(current_user.id, roomId, params["message"])
+
+    return "Ok", 200
+
+
 @blue_allController.route('/dm')
 @login_required
 def directMessageList():
-    if current_user.nickName.casefold() == nickName.casefold():
-        return redirect(url_for("All.index"))
+    from ProjectGrowler.service.dmService import getDMRoomList
+    roomList = getDMRoomList(current_user.id)
 
-    from ProjectGrowler.service.userService import isFollowing
-    fow = isFollowing(current_user.id, nickName)
-    return render_template('index.html', nickName=nickName, following=fow)
+    return render_template('dmlist.html', roomList=json.dumps(roomList))
+
+
+@blue_allController.route('/chats')
+@login_required
+def chatRoomList():
+    from ProjectGrowler.service.chatService import getChatRoomList
+    roomList = getChatRoomList(current_user.id)
+
+    return render_template('chatlist.html', roomList=json.dumps(roomList))
+
+
+@blue_allController.route('/chats/recent/<roomId>')
+@login_required
+def getRecentChat(roomId):
+    from ProjectGrowler.service.chatService import getChatMessages
+    messages = getChatMessages(roomId)
+
+    return jsonify(messages)
+
+
+@blue_allController.route('/chats/<tag>')
+@login_required
+def chatMessages(tag):
+    from ProjectGrowler.service.chatService import getChatRoom
+    chatRoomId = getChatRoom(current_user.id, tag)
+
+    if chatRoomId == False:
+        return "Unknown Tag", 404
+    else:
+        return render_template('chat.html', roomId=chatRoomId, myId=current_user.id)
+
+
+
+@blue_allController.route('/chats/<roomId>', methods=['POST'])
+@login_required
+def newChatMessage(roomId):
+    from ProjectGrowler.service.chatService import postNewChatMessage
+    params = request.get_json()
+    postNewChatMessage(current_user.id, roomId, params["message"])
+
+    return "Ok", 200
 
 
 # Default handlers
