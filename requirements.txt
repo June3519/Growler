@@ -20,3 +20,4 @@ SQLAlchemy==1.4.27
 Werkzeug==2.0.2
 WTForms==3.0.0
 marshmallow-sqlalchemy==0.26.1
+cryptography==36.0.0
