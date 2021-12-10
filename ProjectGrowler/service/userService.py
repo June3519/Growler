@@ -14,6 +14,7 @@ import random
 import hashlib
 
 
+# 새 유저 생성
 def createUser(email: str, nickName: str, password: str) -> bool:
     session = db.session.begin().session
 
@@ -54,6 +55,7 @@ def createUser(email: str, nickName: str, password: str) -> bool:
         session.close()
 
 
+# 이메일 인증하기 
 def emailCert(certKey: str) -> bool:
     session = db.session.begin().session
     try:
@@ -72,6 +74,7 @@ def emailCert(certKey: str) -> bool:
         session.close()
 
 
+# 로그인 ID PW 인증하고 인증키 메일 보내기
 def loginWithoutAuthKey(email: str, password: str) -> str:
     session = db.session.begin().session
     try:
@@ -109,6 +112,7 @@ def loginWithoutAuthKey(email: str, password: str) -> str:
         session.close()
 
 
+# ID로 유저 찾기
 def findUserById(userId: int) -> UserModel:
     session = db.session.begin().session
     try:
@@ -121,6 +125,7 @@ def findUserById(userId: int) -> UserModel:
         session.close()
 
 
+# 인증키를 포함하여 진짜 로그인 하기
 def loginWithAuthKey(email: str, password: str, authKey: int) -> str:
     session = db.session.begin().session
     try:
@@ -158,6 +163,7 @@ def loginWithAuthKey(email: str, password: str, authKey: int) -> str:
         session.close()
 
 
+# 팔로우 유저
 def followUser(currentUserId: int, targetUserNickName: str) -> bool:
     session = db.session.begin().session
 
@@ -193,6 +199,8 @@ def followUser(currentUserId: int, targetUserNickName: str) -> bool:
     finally:
         session.close()
 
+
+# 팔로우 취소
 def unfollowUser(currentUserId: int, targetUserNickName: str) -> bool:
     session = db.session.begin().session
 
@@ -225,7 +233,7 @@ def unfollowUser(currentUserId: int, targetUserNickName: str) -> bool:
         session.close()
 
 
-
+# 팔로잉 여부 가져오기
 def isFollowing(currentUserId: int, targetUserNickName: str) -> bool:
     session = db.session.begin().session
 

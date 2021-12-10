@@ -6,12 +6,14 @@ from flask_login import login_required, login_user, logout_user, current_user, l
 blue_allController = Blueprint("All", __name__, url_prefix="")
 
 
+# 내 타임라인
 @blue_allController.route('/')
 @login_required
 def index():
     return render_template('index.html', following=False)
 
 
+# 다른사람 타임라인
 @blue_allController.route('/users/<nickName>')
 @login_required
 def indexFromUser(nickName):
@@ -23,6 +25,7 @@ def indexFromUser(nickName):
     return render_template('index.html', nickName=nickName, following=fow)
 
 
+# 글 post api
 @blue_allController.route('/growl', methods=['POST'])
 @login_required
 def createPost():
@@ -33,6 +36,7 @@ def createPost():
     return "", 200
 
 
+# 글 가져오기 api
 @blue_allController.route('/growl', methods=['GET'])
 @login_required
 def getRecentPostsByCurrentUser():
@@ -44,6 +48,7 @@ def getRecentPostsByCurrentUser():
         return jsonify(result), 200
 
 
+# 다른사람 타임라인 글 가져오기 api
 @blue_allController.route('/growl/<nickName>', methods=['GET'])
 @login_required
 def getRecentPostsByNickName(nickName):
@@ -55,6 +60,7 @@ def getRecentPostsByNickName(nickName):
         return jsonify(result), 200
 
 
+# 로그아웃
 @blue_allController.route('/logout')
 @login_required
 def logout():
@@ -62,6 +68,7 @@ def logout():
     return redirect(url_for("All.login"))
 
 
+# 로그인 페이지
 @blue_allController.route('/login', methods=['GET', 'POST'])
 def login():
     from ProjectGrowler.forms.loginForm import LoginForm
@@ -78,6 +85,7 @@ def login():
     return render_template('login.html', form=form)
 
 
+# 가입 페이지
 @blue_allController.route('/signUp', methods=['GET', 'POST'])
 def signUp():
     from ProjectGrowler.forms.signUpForm import SignUpForm
@@ -97,11 +105,13 @@ def signUp():
     return render_template('signUp.html', form=form)
 
 
+# 가입 결과 페이지
 @blue_allController.route('/signUpResult')
 def signUpResult():
     return render_template('signUpResult.html')
 
 
+# 이메일 인증 페이지
 @blue_allController.route('/signUpAuth/<certKey>')
 def signUpAuth(certKey):
     from ProjectGrowler.service.userService import emailCert
@@ -110,7 +120,7 @@ def signUpAuth(certKey):
     else:
         abort(404)
 
-
+# 인증키 요청 api
 @blue_allController.route('/sendAuthKey', methods=['POST'])
 def sendAuthKey():
     from ProjectGrowler.forms.loginAuthForm import LoginAuthForm
@@ -126,6 +136,7 @@ def sendAuthKey():
         return make_response(loginErrorMessage, 400)
 
 
+# 팔로워 추가
 @blue_allController.route('/follow/<nickName>', methods=['PUT'])
 def addFollower(nickName):
     from ProjectGrowler.service.userService import followUser
@@ -137,6 +148,7 @@ def addFollower(nickName):
         return message, 403
 
 
+# 팔로워 삭제
 @blue_allController.route('/unfollow/<nickName>', methods=['DELETE'])
 def deleteFollower(nickName):
     from ProjectGrowler.service.userService import unfollowUser
@@ -148,6 +160,7 @@ def deleteFollower(nickName):
         return message, 403
 
 
+# 1:1대화창
 @blue_allController.route('/dm/<nickName>')
 @login_required
 def directMessage(nickName):
@@ -162,6 +175,7 @@ def directMessage(nickName):
         return render_template('dm.html', roomId=dmRoomId, myId=current_user.id)
 
 
+# 1:1대화 글 가져오기 api
 @blue_allController.route('/dm/recent/<roomId>')
 @login_required
 def getRecentDM(roomId):
@@ -171,6 +185,7 @@ def getRecentDM(roomId):
     return jsonify(messages)
 
 
+# 1:1 대화 전송 api
 @blue_allController.route('/dm/<roomId>', methods=['POST'])
 @login_required
 def newDmMessage(roomId):
@@ -181,6 +196,7 @@ def newDmMessage(roomId):
     return "Ok", 200
 
 
+# 1:1 대화 목록 가져오기
 @blue_allController.route('/dm')
 @login_required
 def directMessageList():
@@ -190,6 +206,7 @@ def directMessageList():
     return render_template('dmlist.html', roomList=json.dumps(roomList))
 
 
+# 채팅 목록 가져오기
 @blue_allController.route('/chats')
 @login_required
 def chatRoomList():
@@ -199,6 +216,7 @@ def chatRoomList():
     return render_template('chatlist.html', roomList=json.dumps(roomList))
 
 
+# 채팅창 글 가져오기 api
 @blue_allController.route('/chats/recent/<roomId>')
 @login_required
 def getRecentChat(roomId):
@@ -208,6 +226,7 @@ def getRecentChat(roomId):
     return jsonify(messages)
 
 
+# 채팅 페이지
 @blue_allController.route('/chats/<tag>')
 @login_required
 def chatMessages(tag):
@@ -220,7 +239,7 @@ def chatMessages(tag):
         return render_template('chat.html', roomId=chatRoomId, myId=current_user.id)
 
 
-
+# 채팅 글 보내기 api
 @blue_allController.route('/chats/<roomId>', methods=['POST'])
 @login_required
 def newChatMessage(roomId):

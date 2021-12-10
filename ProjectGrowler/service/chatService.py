@@ -7,6 +7,7 @@ from ProjectGrowler.models.directMessage import DirectMessageModel, DirectMessag
 from ProjectGrowler.models.userModel import UserModel
 
 
+# 채팅방 찾기
 def getChatRoom(currentUserId: int, tag: str):
     session = db.session.begin().session
 
@@ -49,6 +50,7 @@ def getChatRoom(currentUserId: int, tag: str):
         session.close()
 
 
+# 채팅 내용 가져오기
 def getChatMessages(roomId: int):
     session = db.session.begin().session
 
@@ -67,6 +69,7 @@ def getChatMessages(roomId: int):
         session.close()
 
 
+# 채팅방 목록 가져오기
 def getChatRoomList(currentUserId: int):
     session = db.session.begin().session
 
@@ -91,6 +94,7 @@ def getChatRoomList(currentUserId: int):
         session.close()
 
 
+#채팅방 메시지 보내기
 def postNewChatMessage(currentUserId: int, roomId: int, message: str):
     session = db.session.begin().session
 

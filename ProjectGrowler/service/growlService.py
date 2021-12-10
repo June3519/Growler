@@ -8,6 +8,7 @@ from ProjectGrowler.models.growlTag import *
 from ProjectGrowler.models.userModel import UserModel
 
 
+# 새글 쓰기
 def createNewPost(userId: int, growlText: str, tags: str):
     session = db.session.begin().session
     try:
@@ -37,6 +38,7 @@ def createNewPost(userId: int, growlText: str, tags: str):
         session.close()
 
 
+# 내 타임라인 글 가져오기
 def getPosts(userId: int):
     session = db.session.begin().session
     try:
@@ -50,6 +52,7 @@ def getPosts(userId: int):
         session.close()
 
 
+# 다른사람 타임라인글 가져오기
 def getPostsByNickName(nickName: str):
     session = db.session.begin().session
     try:

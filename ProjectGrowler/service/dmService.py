@@ -5,6 +5,7 @@ from ProjectGrowler.models.directMessage import DirectMessageModel, DirectMessag
 from ProjectGrowler.models.userModel import UserModel
 
 
+#1:1 방 만들고 찾아오기
 def getDMRoom(currentUserId: int, targetUserNickName: str):
     session = db.session.begin().session
 
@@ -50,6 +51,7 @@ def getDMRoom(currentUserId: int, targetUserNickName: str):
         session.close()
 
 
+# 1:1 채팅 메시지 가져오기
 def getDirectMessages(roomId: int):
     session = db.session.begin().session
 
@@ -68,6 +70,7 @@ def getDirectMessages(roomId: int):
         session.close()
 
 
+# 1:1 채팅 목록 가져오기
 def getDMRoomList(currentUserId: int):
     session = db.session.begin().session
 
@@ -113,6 +116,7 @@ def getDMRoomList(currentUserId: int):
         session.close()
 
 
+# 새 매시지 보내기
 def postNewDirectMessage(currentUserId: int, roomId: int, message: str):
     session = db.session.begin().session
 
