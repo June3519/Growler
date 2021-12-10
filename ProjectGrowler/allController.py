@@ -139,6 +139,7 @@ def sendAuthKey():
 
 # 팔로워 추가
 @blue_allController.route('/follow/<nickName>', methods=['PUT'])
+@login_required
 def addFollower(nickName):
     from ProjectGrowler.service.userService import followUser
     message, success = followUser(current_user.id, nickName)
@@ -151,6 +152,7 @@ def addFollower(nickName):
 
 # 팔로워 삭제
 @blue_allController.route('/unfollow/<nickName>', methods=['DELETE'])
+@login_required
 def deleteFollower(nickName):
     from ProjectGrowler.service.userService import unfollowUser
     message, success = unfollowUser(current_user.id, nickName)
@@ -253,7 +255,6 @@ def newChatMessage(roomId):
 
 # 패스워드 리셋 요청 페이지
 @blue_allController.route('/forgotpassword', methods=['GET', 'POST'])
-@login_required
 def forgotpassword():
     from ProjectGrowler.forms.forgotpasswordForm import forgotpasswordForm
     form = forgotpasswordForm()
@@ -273,7 +274,6 @@ def forgotpassword():
 
 # 패스워드 변경 페이지
 @blue_allController.route('/resetpassword/<resetKey>', methods=['GET', 'POST'])
-@login_required
 def resetpassword(resetKey):
     from ProjectGrowler.forms.resetPasswordForm import resetPasswordForm
     form = resetPasswordForm()
