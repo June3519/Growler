@@ -6,7 +6,7 @@
             <ul class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4">
                 <li v-for="msg in existsMessages">
                     <div class="group cursor-pointer rounded-lg p-4 border border-gray-900 hover:bg-light-blue-500"
-                    v-bind:class="{ 'bg-blue-500' : msg.senderUser.id == myId}">
+                    v-bind:class="{ 'bg-blue-500' : msg.senderUser.id == myId}" v-on:click="gotoTimeline(msg.senderUser.nickName)">
                         <dl class="grid sm:block lg:grid xl:block grid-cols-2 grid-rows-2 items-center">
                             <dd class="leading-6 font-medium text-black group-hover:text-light-blue-500">
                                 <span>${ msg.chatMessageTexts }$</span>
@@ -77,6 +77,9 @@
                     }).finally(function () {
                         appInstance.isNewPosting = false;
                     })
+                },
+                gotoTimeline(nickName) {
+                    location.href = `/users/${nickName}`;
                 }
             }
         }
