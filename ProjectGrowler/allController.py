@@ -120,6 +120,7 @@ def signUpAuth(certKey):
     else:
         abort(404)
 
+
 # 인증키 요청 api
 @blue_allController.route('/sendAuthKey', methods=['POST'])
 def sendAuthKey():
@@ -248,6 +249,46 @@ def newChatMessage(roomId):
     postNewChatMessage(current_user.id, roomId, params["message"])
 
     return "Ok", 200
+
+
+# 패스워드 리셋 요청 페이지
+@blue_allController.route('/forgotpassword', methods=['GET', 'POST'])
+@login_required
+def forgotpassword():
+    from ProjectGrowler.forms.forgotpasswordForm import forgotpasswordForm
+    form = forgotpasswordForm()
+
+    if form.validate_on_submit():
+        from ProjectGrowler.service.userService import setPasswordResetInfo
+        if setPasswordResetInfo(form.email.data):
+            return redirect(url_for('All.signUpResult'))
+        else:
+            flash('unknown email nickname', 'danger')
+    else:
+        if len(form.errors) != 0:
+            flash(form.errors, "danger")
+
+    return render_template('forgotpassword.html', form=form)
+
+
+# 패스워드 변경 페이지
+@blue_allController.route('/resetpassword/<resetKey>', methods=['GET', 'POST'])
+@login_required
+def resetpassword(resetKey):
+    from ProjectGrowler.forms.resetPasswordForm import resetPasswordForm
+    form = resetPasswordForm()
+
+    if form.validate_on_submit():
+        from ProjectGrowler.service.userService import resetPassword
+        if resetPassword(form.resetKey.data, form.password.data):
+            return redirect(url_for('All.signUpResult'))
+        else:
+            flash('Url is invalid', 'danger')
+    else:
+        if len(form.errors) != 0:
+            flash(form.errors, "danger")
+
+    return render_template('resetpassword.html', form=form, resetKey=resetKey)
 
 
 # Default handlers

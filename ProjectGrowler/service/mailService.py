@@ -14,3 +14,10 @@ def sendLoginAuthMail(loginKey: int, email: str):
     msg = Message("Growler Login Auth Mail", sender=config['MAIL_USERNAME'], recipients=[email])
     msg.body = f'Login Key : {loginKey}'
     mail.send(msg)
+
+
+# 패스워드 초기화 메일 보내기
+def sendPasswordResetMail(resetUrl: str, email: str):
+    msg = Message("Growler Login Auth Mail", sender=config['MAIL_USERNAME'], recipients=[email])
+    msg.body = f'Email Reset Link : https://3.17.36.195/resetpassword/{resetUrl}'
+    mail.send(msg)

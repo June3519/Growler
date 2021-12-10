@@ -12,7 +12,7 @@ class UserModel(db.Model):
     nickName = db.Column(db.String(64))
     password = db.Column(db.String(255))
     isMailCert = db.Column(db.Boolean)
-
+    resetpassword = db.Column(db.String(255))
     createdAt = db.Column(db.DateTime, default=datetime.now)
     updatedAt = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 

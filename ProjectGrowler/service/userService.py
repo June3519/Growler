@@ -6,7 +6,7 @@ from ProjectGrowler.models.follower import FollowerModel
 from ProjectGrowler.models.userModel import UserModel, UserFlaskLoginData
 from ProjectGrowler.models.userEmailCert import UserEmailCertModel
 from ProjectGrowler.models.userLoginAuth import UserLoginAuthModel
-from ProjectGrowler.service.mailService import sendSignUpAuthMail, sendLoginAuthMail
+from ProjectGrowler.service.mailService import sendSignUpAuthMail, sendLoginAuthMail, sendPasswordResetMail
 from datetime import timedelta, datetime
 
 import string
@@ -260,6 +260,55 @@ def isFollowing(currentUserId: int, targetUserNickName: str) -> bool:
         else:
             return True
 
+    except Exception as e:
+        session.rollback()
+        return e, None
+    finally:
+        session.close()
+
+
+# 패스워드 리셋 메일 보내기
+def setPasswordResetInfo(email: str) -> bool:
+    session = db.session.begin().session
+
+    try:
+        currentUser = session.query(UserModel).filter(
+            UserModel.email == email).first()
+
+        if currentUser is None:
+            return False
+
+        newRandomString = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(30))
+        currentUser.resetpassword = newRandomString
+
+        sendPasswordResetMail(newRandomString, email)
+        session.commit()
+
+        return True
+    except Exception as e:
+        session.rollback()
+        return e, None
+    finally:
+        session.close()
+
+
+# 패스워드 리셋하기
+def resetPassword(resetKey: str, newPassword: str) -> bool:
+    session = db.session.begin().session
+
+    try:
+        currentUser = session.query(UserModel).filter(
+            UserModel.resetpassword == resetKey).first()
+
+        if currentUser is None:
+            return False
+
+        currentUser.resetpassword = None
+        currentUser.password = hashlib.sha256(newPassword.encode()).hexdigest()
+
+        session.commit()
+
+        return True
     except Exception as e:
         session.rollback()
         return e, None
